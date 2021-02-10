@@ -19,6 +19,8 @@
 #define TFT_WIDTH  (240)
 #define TFT_HEIGHT (240)
 
+#define IMAGE_BUFFER_SIZE (240 * 10)
+
 #define DC_COMMAND (GPIO_PIN_RESET)
 #define DC_DATA    (GPIO_PIN_SET)
 #define BLK_OFF    (GPIO_PIN_SET)
@@ -46,6 +48,8 @@ enum AsyncTxStateType {
 
 static SPI_HandleTypeDef* hspi_ptr;
 
+static uint16_t image_buffer[IMAGE_BUFFER_SIZE];
+
 static sprite_queue_t sprite_queue[SPRITE_QUEUE_SIZE_MAX];
 static uint16_t sprite_queue_head;
 static uint16_t sprite_queue_size;
@@ -64,6 +68,7 @@ static void drvST7789SendDataArray(const uint8_t* data, uint16_t length);
 static void drvST7789SendCASET(uint8_t pos_x, uint8_t width);
 static void drvST7789SendRASET(uint8_t pos_y, uint8_t height);
 static void drvST7789WriteMemory(const uint8_t* data, uint16_t length);
+static void drvST7789SendSpriteImage(const sprite_t* sprite);
 static void drvST7789SpriteEnqueue(sprite_queue_t* enqueue_data);
 static void drvST7789SpriteDequeue(void);
 static void drvSt7789SetNewTx(void);
@@ -112,7 +117,7 @@ void DrvST7789InterruptDMA(void)
 		case ASYNC_TX_RASET:	/* Row Address Set 完了 */
 			/* Memory Write送信 */
 			async_tx_state = ASYNC_TX_RAMWR;
-			drvST7789WriteMemory((unsigned char *)SpriteList[sprite_queue[sprite_queue_head].sprite_id].image, SpriteList[sprite_queue[sprite_queue_head].sprite_id].w * SpriteList[sprite_queue[sprite_queue_head].sprite_id].h * 2);
+			drvST7789SendSpriteImage(&SpriteList[sprite_queue[sprite_queue_head].sprite_id]);
 			break;
 		case ASYNC_TX_RAMWR:	/* Memory Write 完了 */
 			/* 次のデータがある場合は連続送信、なければ送信停止 */
@@ -157,8 +162,8 @@ void DrvST7789ClearDisplay(void)
 	clear_data.sprite_id = SPRITE_BLACK;
 	clear_data.x = 0;
 
-	for (index=0; index<240; index++) {
-		clear_data.y = index;
+	for (index=0; index<24; index++) {
+		clear_data.y = index * 10;
 		drvST7789SpriteEnqueue(&clear_data);
 	}
 }
@@ -230,6 +235,25 @@ static void drvST7789WriteMemory(const uint8_t* data, uint16_t length)
 {
 	drvST7789SendCmmand(0x2C); /* RAMWR (2Ch): Memory Write */
 	drvST7789SendDataArray(data, length);
+}
+
+/*=== スプライト画像送信関数 ===*/
+static void drvST7789SendSpriteImage(const sprite_t* sprite)
+{
+	uint16_t index;
+	uint16_t loop;
+	uint16_t address;
+
+	address = 0;
+
+	for (index=0; index<sprite->image_length; index+=2) {
+		for (loop=0; loop<sprite->image[index]; loop++) {
+			image_buffer[address] = sprite->image[index+1];
+			address++;
+		}
+	}
+
+	drvST7789WriteMemory((unsigned char *)image_buffer, sprite->w * sprite->h * 2);
 }
 
 /*=== スプライトエンキュー関数 ===*/

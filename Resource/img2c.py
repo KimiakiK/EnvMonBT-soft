@@ -25,7 +25,7 @@ spriteList = [
     'x':0,
     'y':200,
     'w':240,
-    'h':1
+    'h':10
   },
   {
     'file':'String.png',
@@ -237,30 +237,55 @@ spriteList = [
   }
 ]
 
+# スプライトの型定義
 def_struct = '''typedef struct _sprite {
   const uint16_t* image;
+  uint16_t image_length;
   uint8_t x;
   uint8_t y;
   uint8_t w;
   uint8_t h;
 } sprite_t;'''
 
+# 指定座標の色取得
 def getColor(im, x, y):
   r, g, b, a = im.getpixel((x, y))
-
+  
   r = int(r / 8) & 0x1F # 赤は5bit
   g = int(g / 4) & 0x3F # 緑は6bit
   b = int(b / 8) & 0x1F # 青は5bit
   return r<<3 | (g&0b111)<<13 | g>>3 | b<<8
 
+# メイン
 if __name__ == '__main__':
+  # spriteListに従って画像から色情報を取得
   for sprite in spriteList:
     with Image.open(sprite['file']) as im:
       sprite.update({'img':[]})
       for y in range(sprite['y'], sprite['y']+sprite['h']):
         for x in range(sprite['x'], sprite['x']+sprite['w']):
           sprite['img'].append(getColor(im, x, y))
-
+  
+  # 色情報を圧縮
+  for sprite in spriteList:
+    sprite.update({'zip':[]})
+    current_color = sprite['img'][0]
+    color_continue = 0
+    for color in sprite['img']:
+      if color == current_color:
+        # 同じ色が連続
+        color_continue += 1
+      else:
+        # 違う色に変わった
+        sprite['zip'].append(color_continue)
+        sprite['zip'].append(current_color)
+        color_continue = 1
+        current_color = color
+    # 最後の色
+    sprite['zip'].append(color_continue)
+    sprite['zip'].append(color)
+  
+  # ヘッダファイル作成
   with open('resource.h', 'w') as hfile:
     hfile.write('\n')
     hfile.write('#ifndef RESOURCE_H_\n')
@@ -274,28 +299,29 @@ if __name__ == '__main__':
     hfile.write('  SPRITE_NUM\n')
     hfile.write('};\n')
     hfile.write('\n')
-    hfile.write('extern sprite_t SpriteList[];\n')
+    hfile.write('extern const sprite_t SpriteList[];\n')
     hfile.write('\n')
     hfile.write('#ifdef RESOURCE\n')
     hfile.write('#undef RESOURCE\n')
     hfile.write('\n')
     for sprite in spriteList:
       hfile.write('const uint16_t ' + sprite['name'] + '[] = {')
-      hfile.write(', '.join(map(str, sprite['img'])))
+      hfile.write(', '.join(map(str, sprite['zip'])))
       hfile.write('};\n')
     hfile.write('\n\n')
-    hfile.write('sprite_t SpriteList[] = {\n')
+    hfile.write('const sprite_t SpriteList[] = {\n')
     total_size = 0
     for sprite in spriteList:
       hfile.write('  {\n')
       hfile.write('    ' + sprite['name'] + ',\n')
+      hfile.write('    ' + str(len(sprite['zip'])) + ',\n')
       hfile.write('    ' + str(sprite['x']) + ',\n')
       hfile.write('    ' + str(sprite['y']) + ',\n')
       hfile.write('    ' + str(sprite['w']) + ',\n')
       hfile.write('    ' + str(sprite['h']) + ',\n')
       hfile.write('  },\n')
-      total_size += sprite['w'] * sprite['h'] * 2
-      print('name:' + sprite['name'] + ' size: ' + str(sprite['w'] * sprite['h'] * 2))
+      total_size += len(sprite['zip']) * 2
+      print('name:' + sprite['name'] + ' size: ' + str(len(sprite['zip']) * 2))
     print('totla: ' + str(total_size))
     hfile.write('};\n')
     hfile.write('#endif\n')
