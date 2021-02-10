@@ -33,6 +33,11 @@ void DrvRtcInit(RTC_HandleTypeDef* hrtc)
 
 	hrtc_ptr = hrtc;
 
+#if 0
+	init_time.hour = 21;
+	init_time.minute = 0;
+#endif
+
 	DrvRtcSetTime(init_time);
 
 	/* RTCレジスタ書き込み保護解除 */
@@ -52,6 +57,11 @@ void DrvRtcMain(void)
 	nowTime.hour = rtc_data.Hours;
 	nowTime.minute = rtc_data.Minutes;
 	nowTime.second = rtc_data.Seconds;
+
+#if 0
+	nowTime.hour = nowTime.minute;
+	nowTime.minute = nowTime.second;
+#endif
 }
 
 /*=== 現在時刻取得関数 ===*/

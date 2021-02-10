@@ -43,7 +43,7 @@ static uint8_t envMinuteHead;
 static uint8_t envHourHead;
 
 /* 前回処理時刻 */
-static time_t oldTime;
+static time_t logTime;
 
 /********** Function Prototype **********/
 
@@ -80,8 +80,36 @@ void AplLoggerInit(void)
 /*=== 周期関数 ===*/
 void AplLoggerMain(void)
 {
+	/* 最新環境データ入力 */
 	aplLoggerInputNewEnv();
+	/* 環境データログ */
 	aplLoggerEnvLogging();
+}
+
+/*=== 分単位環境データ取得関数 ===*/
+float AplLoggerGetMinuteEnv(uint8_t env_id, uint8_t index, uint8_t* time)
+{
+	float env_value;
+
+	/* 指定位置のデータ取得 */
+	env_value = envMinute[(envMinuteHead + MINITE_LOG_NUM - index) % MINITE_LOG_NUM][env_id];
+	/* 指定時間の一つ前の値を返す */
+	*time = ((logTime.minute / LOG_INTERVAL_MINUTE) + MINITE_LOG_NUM - index - 1) % MINITE_LOG_NUM;
+
+	return env_value;
+}
+
+/*=== 時単位環境データ取得関数 ===*/
+float AplLoggerGetHourEnv(uint8_t env_id, uint8_t index, uint8_t* time)
+{
+	float env_value;
+
+	/* 指定位置のデータ取得 */
+	env_value = envHour[(envHourHead + HOUR_LOG_NUM - index) % HOUR_LOG_NUM][env_id];
+	/* 指定時間の一つ前の値を返す */
+	*time = (logTime.hour + 24 - index - 1) % 24;
+
+	return env_value;
 }
 
 /*=== 最新環境データ入力関数 ===*/
@@ -104,7 +132,7 @@ static void aplLoggerInputNewEnv(void)
 	}
 }
 
-/* 環境データログ関数 */
+/*=== 環境データログ関数 ===*/
 static void aplLoggerEnvLogging(void)
 {
 	time_t now_time;
@@ -116,12 +144,7 @@ static void aplLoggerEnvLogging(void)
 	/* 現在時刻取得 */
 	now_time = DrvRtcGetNowTime();
 
-#if 1
-	now_time.hour = now_time.minute;
-	now_time.minute = now_time.second;
-#endif
-
-	if (now_time.minute != oldTime.minute) {
+	if (now_time.minute != logTime.minute) {
 		if ((now_time.minute % LOG_INTERVAL_MINUTE) == 0) {
 			/* 分の値が変化してログ間隔になったとき、新しい環境データをログ */
 			envMinuteHead = (envMinuteHead + 1) % MINITE_LOG_NUM;
@@ -130,10 +153,10 @@ static void aplLoggerEnvLogging(void)
 				envAverage[env_id] = ENV_NODATA;
 			}
 		}
-		oldTime.minute = now_time.minute;
+		logTime.minute = now_time.minute;
 	}
 
-	if (now_time.hour != oldTime.hour) {
+	if (now_time.hour != logTime.hour) {
 		if ((now_time.hour % LOG_INTERVAL_HOUR) == 0) {
 			/* 時の値が変化してログ間隔になったとき、新しい環境データをログ */
 			envHourHead = (envHourHead + 1) % HOUR_LOG_NUM;
@@ -150,6 +173,6 @@ static void aplLoggerEnvLogging(void)
 				envHour[envHourHead][env_id] = sum / valid_data_num;
 			}
 		}
-		oldTime.hour = now_time.hour;
+		logTime.hour = now_time.hour;
 	}
 }

@@ -19,7 +19,7 @@
 #define TFT_WIDTH  (240)
 #define TFT_HEIGHT (240)
 
-#define IMAGE_BUFFER_SIZE (240 * 10)
+#define IMAGE_BUFFER_SIZE (2500)
 
 #define DC_COMMAND (GPIO_PIN_RESET)
 #define DC_DATA    (GPIO_PIN_SET)
@@ -71,7 +71,7 @@ static void drvST7789WriteMemory(const uint8_t* data, uint16_t length);
 static void drvST7789SendSpriteImage(const sprite_t* sprite);
 static void drvST7789SpriteEnqueue(sprite_queue_t* enqueue_data);
 static void drvST7789SpriteDequeue(void);
-static void drvSt7789SetNewTx(void);
+static void drvST7789SetNewTx(void);
 
 /********** Function **********/
 
@@ -123,7 +123,7 @@ void DrvST7789InterruptDMA(void)
 			/* 次のデータがある場合は連続送信、なければ送信停止 */
 			drvST7789SpriteDequeue();
 			async_tx_state = ASYNC_TX_IDLE;
-			drvSt7789SetNewTx();
+			drvST7789SetNewTx();
 			break;
 		default:
 			/* 状態異常時は初期値に戻す */
@@ -272,7 +272,7 @@ static void drvST7789SpriteEnqueue(sprite_queue_t* enqueue_data)
 	}
 
 	if (async_tx_state == ASYNC_TX_IDLE) {
-		drvSt7789SetNewTx();
+		drvST7789SetNewTx();
 	}
 }
 
@@ -286,7 +286,7 @@ static void drvST7789SpriteDequeue(void)
 }
 
 /*=== 新規送信設定関数 ===*/
-static void drvSt7789SetNewTx(void)
+static void drvST7789SetNewTx(void)
 {
 	if (sprite_queue_size != 0) {
 		if (sprite_queue[sprite_queue_head].sprite_id == SPRITE_SPECIAL_DISPALY_OFF) {
@@ -294,13 +294,13 @@ static void drvSt7789SetNewTx(void)
 			HAL_GPIO_WritePin(TFT_BLK_GPIO_Port, TFT_BLK_Pin, BLK_ON);
 			drvST7789SendCmmand(0x28); /* DISPOFF (28h): Display Off */
 			drvST7789SpriteDequeue();
-			drvSt7789SetNewTx();
+			drvST7789SetNewTx();
 		} else if (sprite_queue[sprite_queue_head].sprite_id == SPRITE_SPECIAL_DISPALY_ON) {
 			/* 画面表示 */
 			drvST7789SendCmmand(0x29); /* DISPON (29h): Display On */
 			HAL_GPIO_WritePin(TFT_BLK_GPIO_Port, TFT_BLK_Pin, BLK_OFF);
 			drvST7789SpriteDequeue();
-			drvSt7789SetNewTx();
+			drvST7789SetNewTx();
 		} else {
 			/* スプライトの送信開始 */
 			async_tx_state = ASYNC_TX_CASET;

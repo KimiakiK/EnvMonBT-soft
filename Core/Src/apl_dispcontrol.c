@@ -26,14 +26,16 @@ enum eventType {
 /********** Variable **********/
 
 static uint8_t dispState;
-static uint16_t dispTimer;
+static uint16_t dispOffTimer;
+
+static uint8_t oldSwState;
 
 /********** Function Prototype **********/
 
 static void aplDispcontrolDisplayOnOff(uint8_t disp_state_old);
 
 static uint8_t aplDispcontrolEventSw(void);
-static uint8_t aplDispcontrolEventTimer(void);
+static uint8_t aplDispcontrolEventDispOffTimer(void);
 
 static void aplDispcontrolActionTimerClear(void);
 
@@ -43,7 +45,9 @@ static void aplDispcontrolActionTimerClear(void);
 void AplDispcontrolInit(void)
 {
 	dispState = DISP_STATE_INIT;
-	dispTimer = 0;
+	dispOffTimer = 0;
+
+	oldSwState = SW_ON;
 }
 
 /*=== 周期関数 ===*/
@@ -51,12 +55,12 @@ void AplDispcontrolMain(void)
 {
 	uint8_t disp_state_old;
 	uint8_t event_sw;
-	uint8_t event_timer;
+	uint8_t event_disp_off_timer;
 
 	disp_state_old = dispState;
 
 	event_sw = aplDispcontrolEventSw();
-	event_timer = aplDispcontrolEventTimer();
+	event_disp_off_timer = aplDispcontrolEventDispOffTimer();
 
 	switch (dispState) {
 	case DISP_STATE_OFF:							/* 非表示状態 */
@@ -73,22 +77,43 @@ void AplDispcontrolMain(void)
 		break;
 	case DISP_STATE_MAIN:							/* メイン表示状態 */
 		if (event_sw == EVENT_ON) {					/* スイッチが押されたら */
+			dispState = DISP_STATE_TEMP;			/* 気温表示へ遷移 */
 			aplDispcontrolActionTimerClear();		/* タイマクリア */
-		} else if (event_timer == EVENT_ON) {		/* 時間が経過したら */
+		} else if (event_disp_off_timer == EVENT_ON) {		/* 時間が経過したら */
 			dispState = DISP_STATE_OFF;				/* 非表示へ遷移 */
 		}
 		break;
 	case DISP_STATE_TEMP:
-
+		if (event_sw == EVENT_ON) {					/* スイッチが押されたら */
+			dispState = DISP_STATE_HUMI;			/* 湿度表示へ遷移 */
+			aplDispcontrolActionTimerClear();		/* タイマクリア */
+		} else if (event_disp_off_timer == EVENT_ON) {		/* 時間が経過したら */
+			dispState = DISP_STATE_OFF;				/* 非表示へ遷移 */
+		}
 		break;
 	case DISP_STATE_HUMI:
-
+		if (event_sw == EVENT_ON) {					/* スイッチが押されたら */
+			dispState = DISP_STATE_PRESS;			/* 気圧表示へ遷移 */
+			aplDispcontrolActionTimerClear();		/* タイマクリア */
+		} else if (event_disp_off_timer == EVENT_ON) {		/* 時間が経過したら */
+			dispState = DISP_STATE_OFF;				/* 非表示へ遷移 */
+		}
 		break;
 	case DISP_STATE_PRESS:
-
+		if (event_sw == EVENT_ON) {					/* スイッチが押されたら */
+			dispState = DISP_STATE_CO2;			/* CO2表示へ遷移 */
+			aplDispcontrolActionTimerClear();		/* タイマクリア */
+		} else if (event_disp_off_timer == EVENT_ON) {		/* 時間が経過したら */
+			dispState = DISP_STATE_OFF;				/* 非表示へ遷移 */
+		}
 		break;
 	case DISP_STATE_CO2:
-
+		if (event_sw == EVENT_ON) {					/* スイッチが押されたら */
+			dispState = DISP_STATE_MAIN;			/* メイン表示へ遷移 */
+			aplDispcontrolActionTimerClear();		/* タイマクリア */
+		} else if (event_disp_off_timer == EVENT_ON) {		/* 時間が経過したら */
+			dispState = DISP_STATE_OFF;				/* 非表示へ遷移 */
+		}
 		break;
 	default:
 		/* 異常時は初期値に戻す */
@@ -128,23 +153,25 @@ static uint8_t aplDispcontrolEventSw(void)
 
 	sw_state = DrvSwGetSwState(SW_ID_DISPSW);
 
-	if (sw_state == SW_ON) {
+	if ((sw_state == SW_ON) && (oldSwState == SW_OFF)) {
 		event = EVENT_ON;
 	} else {
 		event = EVENT_OFF;
 	}
 
+	oldSwState = sw_state;
+
 	return event;
 }
 
 /*=== タイマイベント関数 ===*/
-static uint8_t aplDispcontrolEventTimer(void)
+static uint8_t aplDispcontrolEventDispOffTimer(void)
 {
 	uint8_t event;
 
-	dispTimer ++;
+	dispOffTimer ++;
 
-	if (dispTimer >= 150) {
+	if (dispOffTimer >= DISP_OFF_TIME) {
 		event = EVENT_ON;
 	} else {
 		event = EVENT_OFF;
@@ -156,5 +183,5 @@ static uint8_t aplDispcontrolEventTimer(void)
 /*=== タイマクリアアクション関数 ===*/
 static void aplDispcontrolActionTimerClear(void)
 {
-	dispTimer = 0;
+	dispOffTimer = 0;
 }

@@ -7,6 +7,7 @@
 
 /********** Include **********/
 
+#include <math.h>
 #include "main.h"
 #include "drv_bme280.h"
 
@@ -143,22 +144,46 @@ void DrvBME280Main(void)
 /*=== 気温取得関数 ===*/
 float DrvBME280GetTemperature(void)
 {
+	float ret;
+
 	/* temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC. */
-	return (float)temperature / 100.0f;
+	ret = (float)temperature / 100.0f;
+
+	if (ret <= -100.0f && 100.0f <= ret) {
+		ret = NAN;
+	}
+
+	return ret;
 }
 
 /*=== 湿度取得関数 ===*/
 float DrvBME280GetHumidity(void)
 {
+	float ret;
+
 	/* humidity in %RH, resolution is 0.001 %RH. Output value of “46333” equals 46.333 %RH. */
-	return (float)humidity / 1000.0f;
+	ret = (float)humidity / 1000.0f;
+
+	if (ret < 0.0f && 100.0f < ret) {
+		ret = NAN;
+	}
+
+	return ret;
 }
 
 /*=== 気圧取得関数 ===*/
 float DrvBME280GetPressure(void)
 {
+	float ret;
+
 	/* pressure in Pa, resolution is 0.1 Pa. Output value of “963862” equals 96386.2 Pa (963.862 hPa). */
-	return (float)pressure / 100.f;
+	ret = (float)pressure / 100.f;
+
+	if (ret < 0.0f && 10000.0f <= ret) {
+		ret = NAN;
+	}
+
+	return ret;
 }
 
 /*=== パラメータ読み出し関数 ===*/

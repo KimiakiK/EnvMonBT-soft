@@ -10,7 +10,8 @@
 
 /********** Include **********/
 
-#include "math.h"
+#include <math.h>
+#include <float.h>
 
 /********** Define **********/
 
@@ -34,5 +35,7 @@ enum envDataType {
 
 void AplLoggerInit(void);
 void AplLoggerMain(void);
+float AplLoggerGetMinuteEnv(uint8_t env_id, uint8_t index, uint8_t* time);
+float AplLoggerGetHourEnv(uint8_t env_id, uint8_t index, uint8_t* time);
 
 #endif /* INC_APL_LOGGER_H_ */

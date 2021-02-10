@@ -7,6 +7,7 @@
 
 /********** Include **********/
 
+#include <math.h>
 #include "main.h"
 #include "drv_mhz19b.h"
 
@@ -98,8 +99,16 @@ void DrvMHZ19BMain(void)
 /*=== CO2取得関数 ===*/
 float DrvMHZ19BGetCo2(void)
 {
+	float ret;
+
 	/* co2 in ppm, resolution is 1 ppm. Output value of “413” equals 413 ppm. */
-	return (float)co2;
+	ret =  (float)co2;
+
+	if (ret < 400.0f && 10000.0f <= ret) {
+		ret = NAN;
+	}
+
+	return ret;
 }
 
 /*=== 送信データ設定関数 ===*/

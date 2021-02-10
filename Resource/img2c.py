@@ -3,7 +3,7 @@ from pathlib import Path
 from PIL import Image
 
 spriteList = [
-  {
+  { # 特殊スプライト
     'file':'String.png',
     'name':'SPECIAL_DISPALY_OFF',
     'x':0,
@@ -19,7 +19,7 @@ spriteList = [
     'w':1,
     'h':1
   },
-  {
+  { # 画面クリア用
     'file':'String.png',
     'name':'BLACK',
     'x':0,
@@ -27,9 +27,9 @@ spriteList = [
     'w':240,
     'h':10
   },
-  {
+  { # 文字(大)
     'file':'String.png',
-    'name':'num0',
+    'name':'num0_L',
     'x':1,
     'y':1,
     'w':18,
@@ -37,7 +37,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num1',
+    'name':'num1_L',
     'x':21,
     'y':1,
     'w':18,
@@ -45,7 +45,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num2',
+    'name':'num2_L',
     'x':41,
     'y':1,
     'w':18,
@@ -53,7 +53,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num3',
+    'name':'num3_L',
     'x':61,
     'y':1,
     'w':18,
@@ -61,7 +61,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num4',
+    'name':'num4_L',
     'x':81,
     'y':1,
     'w':18,
@@ -69,7 +69,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num5',
+    'name':'num5_L',
     'x':101,
     'y':1,
     'w':18,
@@ -77,7 +77,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num6',
+    'name':'num6_L',
     'x':121,
     'y':1,
     'w':18,
@@ -85,7 +85,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num7',
+    'name':'num7_L',
     'x':141,
     'y':1,
     'w':18,
@@ -93,7 +93,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num8',
+    'name':'num8_L',
     'x':161,
     'y':1,
     'w':18,
@@ -101,7 +101,7 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'num9',
+    'name':'num9_L',
     'x':181,
     'y':1,
     'w':18,
@@ -109,7 +109,15 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'numBlack',
+    'name':'minus_L',
+    'x':201,
+    'y':1,
+    'w':18,
+    'h':26
+  },
+  {
+    'file':'String.png',
+    'name':'numBlack_L',
     'x':221,
     'y':1,
     'w':18,
@@ -117,13 +125,221 @@ spriteList = [
   },
   {
     'file':'String.png',
-    'name':'minus',
-    'x':201,
-    'y':1,
-    'w':18,
+    'name':'dot_L',
+    'x':1,
+    'y':74,
+    'w':6,
     'h':26
   },
+  { # 文字(中)
+    'file':'String.png',
+    'name':'num0_M',
+    'x':2,
+    'y':29,
+    'w':14,
+    'h':20
+  },
   {
+    'file':'String.png',
+    'name':'num1_M',
+    'x':17,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num2_M',
+    'x':32,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num3_M',
+    'x':47,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num4_M',
+    'x':62,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num5_M',
+    'x':77,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num6_M',
+    'x':92,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num7_M',
+    'x':107,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num8_M',
+    'x':122,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'num9_M',
+    'x':137,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'minus_M',
+    'x':157,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'numBlack_M',
+    'x':172,
+    'y':29,
+    'w':14,
+    'h':20
+  },
+  {
+    'file':'String.png',
+    'name':'dot_M',
+    'x':8,
+    'y':80,
+    'w':5,
+    'h':20
+  },
+  { # 文字(小)
+    'file':'String.png',
+    'name':'num0_S',
+    'x':1,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num1_S',
+    'x':12,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num2_S',
+    'x':23,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num3_S',
+    'x':34,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num4_S',
+    'x':45,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num5_S',
+    'x':56,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num6_S',
+    'x':67,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num7_S',
+    'x':78,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num8_S',
+    'x':89,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'num9_S',
+    'x':100,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'minus_S',
+    'x':111,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'numBlack_S',
+    'x':122,
+    'y':52,
+    'w':10,
+    'h':14
+  },
+  {
+    'file':'String.png',
+    'name':'dot_S',
+    'x':14,
+    'y':86,
+    'w':4,
+    'h':14
+  },
+  { # アイコン
     'file':'main1.png',
     'name':'IconTemp',
     'x':22,
@@ -141,35 +357,11 @@ spriteList = [
   },
   {
     'file':'main1.png',
-    'name':'IconPress1',
-    'x':10,
-    'y':125,
-    'w':10,
-    'h':30
-  },
-  {
-    'file':'main1.png',
-    'name':'IconPress2',
-    'x':25,
-    'y':125,
-    'w':10,
-    'h':30
-  },
-  {
-    'file':'main1.png',
-    'name':'IconPress3',
-    'x':40,
-    'y':125,
-    'w':10,
-    'h':30
-  },
-  {
-    'file':'main1.png',
-    'name':'IconPress4',
+    'name':'IconPress',
     'x':5,
-    'y':168,
+    'y':125,
     'w':50,
-    'h':7
+    'h':50
   },
   {
     'file':'main1.png',
@@ -179,61 +371,493 @@ spriteList = [
     'w':43,
     'h':35
   },
-  {
+  { # 単位
     'file':'main1.png',
     'name':'UnitTemp',
-    'x':189,
-    'y':24,
-    'w':25,
-    'h':19
+    'x':188,
+    'y':23,
+    'w':26,
+    'h':20
   },
   {
     'file':'main1.png',
     'name':'UnitHumi',
-    'x':189,
-    'y':84,
-    'w':22,
-    'h':19
+    'x':188,
+    'y':83,
+    'w':23,
+    'h':20
   },
   {
     'file':'main1.png',
     'name':'UnitPress',
-    'x':189,
-    'y':144,
-    'w':46,
-    'h':19
+    'x':188,
+    'y':143,
+    'w':47,
+    'h':20
   },
   {
     'file':'main1.png',
     'name':'UnitCo2',
-    'x':189,
-    'y':207,
-    'w':46,
-    'h':16
+    'x':188,
+    'y':206,
+    'w':47,
+    'h':17
+  },
+  { # 統計文字
+    'file':'Log_Temp.png',
+    'name':'Max',
+    'x':61,
+    'y':6,
+    'w':29,
+    'h':12
   },
   {
-    'file':'main1.png',
-    'name':'DotTemp',
-    'x':152,
+    'file':'Log_Temp.png',
+    'name':'Ave',
+    'x':61,
+    'y':24,
+    'w':27,
+    'h':12
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'Min',
+    'x':61,
+    'y':42,
+    'w':28,
+    'h':12
+  },
+  { # 統計数値下線
+    'file':'Log_Temp.png',
+    'name':'Max_ShortLine',
+    'x':60,
+    'y':19,
+    'w':92,
+    'h':1
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'Ave_ShortLine',
+    'x':60,
     'y':37,
-    'w':6,
-    'h':6
+    'w':92,
+    'h':1
   },
   {
-    'file':'main1.png',
-    'name':'DotHumi',
-    'x':152,
-    'y':97,
-    'w':6,
-    'h':6
+    'file':'Log_Temp.png',
+    'name':'Min_ShortLine',
+    'x':60,
+    'y':55,
+    'w':92,
+    'h':1
+  },
+  { # 時計コロン
+    'file':'Log_Temp.png',
+    'name':'Colon',
+    'x':203,
+    'y':6,
+    'w':5,
+    'h':12
+  },
+  { # グラフタイトル
+    'file':'Log_Temp.png',
+    'name':'Minute',
+    'x':3,
+    'y':63,
+    'w':54,
+    'h':12
   },
   {
-    'file':'main1.png',
-    'name':'DotPress',
-    'x':152,
-    'y':157,
+    'file':'Log_Temp.png',
+    'name':'Hour',
+    'x':3,
+    'y':152,
+    'w':37,
+    'h':12
+  },
+  { # グラフ
+    'file':'Log_Humi.png',
+    'name':'GraphMinuteBack',
+    'x':0,
+    'y':76,
+    'w':12,
+    'h':57
+  },
+  {
+    'file':'Log_Humi.png',
+    'name':'GraphHourBack',
+    'x':0,
+    'y':166,
+    'w':10,
+    'h':57
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'GraphMinuteAverageLine',
+    'x':0,
+    'y':80,
+    'w':12,
+    'h':1
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'GraphHourAverageLine',
+    'x':0,
+    'y':180,
+    'w':10,
+    'h':1
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_0',
+    'x':232,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_1',
+    'x':220,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_2',
+    'x':208,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_3',
+    'x':196,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_4',
+    'x':184,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_5',
+    'x':172,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_6',
+    'x':160,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_7',
+    'x':148,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_8',
+    'x':136,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_9',
+    'x':124,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_10',
+    'x':112,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_11',
+    'x':100,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_12',
+    'x':88,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_13',
+    'x':76,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_14',
+    'x':64,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_15',
+    'x':52,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_16',
+    'x':40,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_17',
+    'x':28,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_18',
+    'x':16,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_M_19',
+    'x':4,
+    'y':100,
+    'w':4,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_0',
+    'x':232,
+    'y':200,
     'w':6,
-    'h':6
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_1',
+    'x':222,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_2',
+    'x':212,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_3',
+    'x':202,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_4',
+    'x':192,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_5',
+    'x':182,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_6',
+    'x':172,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_7',
+    'x':162,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_8',
+    'x':152,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_9',
+    'x':142,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_10',
+    'x':132,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_11',
+    'x':122,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_12',
+    'x':112,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_13',
+    'x':102,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_14',
+    'x':92,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_15',
+    'x':82,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_16',
+    'x':72,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_17',
+    'x':62,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_18',
+    'x':52,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_19',
+    'x':42,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_20',
+    'x':32,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_21',
+    'x':22,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_22',
+    'x':12,
+    'y':200,
+    'w':6,
+    'h':3
+  },
+  {
+    'file':'Log_Temp.png',
+    'name':'plot_H_23',
+    'x':2,
+    'y':200,
+    'w':6,
+    'h':3
   }
 ]
 
@@ -256,6 +880,12 @@ def getColor(im, x, y):
   b = int(b / 8) & 0x1F # 青は5bit
   return r<<3 | (g&0b111)<<13 | g>>3 | b<<8
 
+def getColorLevel(level):
+  r = int(level / 8) & 0x1F # 赤は5bit
+  g = int(level / 4) & 0x3F # 緑は6bit
+  b = int(level / 8) & 0x1F # 青は5bit
+  return r<<3 | (g&0b111)<<13 | g>>3 | b<<8
+
 # メイン
 if __name__ == '__main__':
   # spriteListに従って画像から色情報を取得
@@ -276,7 +906,7 @@ if __name__ == '__main__':
         # 同じ色が連続
         color_continue += 1
       else:
-        # 違う色に変わった
+        # 違う色に変化
         sprite['zip'].append(color_continue)
         sprite['zip'].append(current_color)
         color_continue = 1
@@ -324,6 +954,8 @@ if __name__ == '__main__':
       print('name:' + sprite['name'] + ' size: ' + str(len(sprite['zip']) * 2))
     print('totla: ' + str(total_size))
     hfile.write('};\n')
-    hfile.write('#endif\n')
-    hfile.write('#endif\n')
+    hfile.write('#endif /* RESOURCE */\n')
     hfile.write('\n')
+    hfile.write('#endif /* RESOURCE_H_ */\n')
+    hfile.write('\n')
+  

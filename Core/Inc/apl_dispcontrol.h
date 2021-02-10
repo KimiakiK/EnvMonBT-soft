@@ -13,6 +13,9 @@
 
 /********** Define **********/
 
+/* 表示OFF時間 [10ms] */
+#define DISP_OFF_TIME	(250)
+
 enum dispStateType {
 	DISP_STATE_OFF = 0,
 	DISP_STATE_INIT,
