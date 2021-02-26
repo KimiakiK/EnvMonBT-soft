@@ -56,6 +56,8 @@ void SysPlatformInit(TIM_HandleTypeDef* htim1)
 /*=== メインループ関数 ===*/
 void SysPlatformMain(void)
 {
+	DrvRN4020Main();
+	
 	switch (count_10ms) {
 	case  0: /*   0ms */
 		DrvRtcMain();			/* 現在時刻取得 */

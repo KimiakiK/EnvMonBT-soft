@@ -1,19 +1,27 @@
 /*
- * drv_rn4020.h
+ * common_type.h
  *
- *  Created on: Oct 10, 2020
+ *  Created on: Feb 24, 2021
  *      Author: kimi
  */
 
-#ifndef INC_DRV_RN4020_H_
-#define INC_DRV_RN4020_H_
-
+#ifndef INC_COMMON_TYPE_H_
+#define INC_COMMON_TYPE_H_
 
 /********** Include **********/
 
+#include "main.h"
+
 /********** Define **********/
 
+enum Bool {
+	FALSE = 0,
+	TRUE
+};
+
 /********** Type **********/
+
+typedef enum Bool	bool_t;
 
 /********** Constant **********/
 
@@ -21,7 +29,4 @@
 
 /********** Function Prototype **********/
 
-void DrvRN4020Init(UART_HandleTypeDef* huart);
-void DrvRN4020Main(void);
-
-#endif /* INC_DRV_RN4020_H_ */
+#endif /* INC_COMMON_TYPE_H_ */
