@@ -24,7 +24,7 @@
 /* 分単位のログ数 */
 #define MINITE_LOG_NUM			(20)
 /* 時単位のログ数 */
-#define HOUR_LOG_NUM			(24*3)
+#define HOUR_LOG_NUM			(24*5)
 
 /********** Type **********/
 
