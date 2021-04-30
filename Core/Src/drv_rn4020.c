@@ -235,6 +235,7 @@ static uint16_t rx_buffer_index;
 static uint16_t rx_buffer_head;
 static ble_state_t ble_state;
 static com_state_t com_state;
+static receive_id_t receive_message_id;
 static receive_id_t command_response_id;
 static uint8_t com_state_error_count;
 static suuid_state_t suuid_state;
@@ -258,6 +259,7 @@ static void processInitSequence(void);
 static void sendCommand(command_id_t command_id);
 static uint8_t setCharacteristicInitValue(void);
 static uint8_t copyTxBuffer(const uint8_t* data, uint8_t size, uint8_t offset);
+static void writeCurrentEnv(void);
 
 /********** Function **********/
 
@@ -270,6 +272,7 @@ void DrvRN4020Init(UART_HandleTypeDef* huart)
 
 	ble_state = BLE_INIT;
 	com_state = COM_TX_WAIT;
+	receive_message_id = RECEIVE_ID_NUM;
 	command_response_id = RECEIVE_ID_NUM;
 	com_state_error_count = 0;
 	suuid_state = SUUID_NO_INIT;
@@ -296,6 +299,9 @@ static void receive(void)
 	uint16_t rx_size;
 	uint16_t line_size;
 	uint16_t checked_size;
+
+	/* 受信メッセージID初期化 */
+	receive_message_id = RECEIVE_ID_NUM;
 
 	/* 受信できたバッファ位置を計算 */
 	rx_buffer_head = RX_BUFFER_SIZE - huart_ptr->hdmarx->Instance->CNDTR;
@@ -415,6 +421,8 @@ static uint16_t checkReceiveMessage(uint16_t line_size)
 		checked_size = line_size;
 		break;
 	}
+
+	receive_message_id = receive_id;
 
 	return checked_size;
 }
@@ -537,10 +545,17 @@ static void transitionBleState(void)
 		}
 		break;
 	case BLE_ADVERTISE:
-
+		/* Connectedメッセージを受信したら接続状態へ遷移 */
+		if (receive_message_id == RECEIVE_ID_CONNECTED) {
+			ble_state = BLE_CONNECT;
+		}
 		break;
 	case BLE_CONNECT:
-
+		/* Connection Endメッセージを受信したらアドバタイズ指示 */
+		if (receive_message_id == RECEIVE_ID_CONNECTION_END) {
+			init_seq = INIT_SEQ_Advertise;
+			ble_state = BLE_INIT;
+		}
 		break;
 	default:
 		/* 処理無し */
@@ -558,10 +573,10 @@ static void processBleState(void)
 		processInitSequence();
 		break;
 	case BLE_ADVERTISE:
-
+		/* 接続待ちなので、処理無し */
 		break;
 	case BLE_CONNECT:
-
+		writeCurrentEnv();
 		break;
 	default:
 		/* 処理無し */
@@ -795,4 +810,85 @@ static uint8_t setCharacteristicInitValue(void)
 	buffer_index = copyTxBuffer(env_chara_init, ENV_CHARA_VALUE_SIZE, buffer_index);
 
 	return buffer_index;
+}
+
+/*=== 現在値書き込み関数(テスト用) ===*/
+extern float DrvBME280GetTemperature(void);
+extern float DrvBME280GetPressure(void);
+extern float DrvBME280GetHumidity(void);
+extern float DrvMHZ19BGetCo2(void);
+static void writeCurrentEnv(void)
+{
+	static uint16_t wait_counter;
+	static uint8_t target_env;
+	int16_t env;
+	uint8_t env_chara[8];
+
+	for (uint8_t index=0; index<4; index++) {
+		env_chara[index * 2] = '3';
+		env_chara[index * 2 + 1] = '0';
+	}
+
+	if (wait_counter == 0) {
+		wait_counter = 20;
+		target_env ++;
+		if (target_env >= 4) {
+			target_env = 0;
+		}
+
+		switch (target_env) {
+		case 0: /* Temperature */
+			env = DrvBME280GetTemperature() * 10.0;
+			if (env < 0) {
+				env = - env;
+				env_chara[1] = '1';
+			}
+			env_chara[3] = ((env / 100) % 10) + '0';
+			env_chara[5] = ((env / 10) % 10) + '0';
+			env_chara[7] = ((env / 1) % 10) + '0';
+			break;
+		case 1: /* Pressure */
+			env = DrvBME280GetPressure() * 10.0;
+			env_chara[1] = ((env / 1000) % 10) + '0';
+			env_chara[3] = ((env / 100) % 10) + '0';
+			env_chara[5] = ((env / 10) % 10) + '0';
+			env_chara[7] = ((env / 1) % 10) + '0';
+			break;
+		case 2: /* Humidity */
+			env = DrvBME280GetHumidity() * 10.0;
+			env_chara[1] = ((env / 1000) % 10) + '0';
+			env_chara[3] = ((env / 100) % 10) + '0';
+			env_chara[5] = ((env / 10) % 10) + '0';
+			env_chara[7] = ((env / 1) % 10) + '0';
+			break;
+		case 3: /* Co2 */
+		default:
+			env = DrvMHZ19BGetCo2();
+			env_chara[1] = ((env / 1000) % 10) + '0';
+			env_chara[3] = ((env / 100) % 10) + '0';
+			env_chara[5] = ((env / 10) % 10) + '0';
+			env_chara[7] = ((env / 1) % 10) + '0';
+			break;
+		}
+
+		{
+			uint8_t buffer_index;
+			buffer_index = 0;
+			buffer_index = copyTxBuffer(command_info[COMMAND_ID_WriteServerHandle].command, command_info[COMMAND_ID_WriteServerHandle].size, buffer_index);
+			buffer_index = copyTxBuffer(suuid_list[target_env + CHARA_TEMP], SUUID_SIZE, buffer_index);
+			buffer_index = copyTxBuffer(command_separator, 1, buffer_index);
+			buffer_index = copyTxBuffer(env_chara, 8, buffer_index);
+			/* 最後にリターンコードを付加 */
+			tx_buffer[buffer_index] = COMMAND_RETURN_CODE;
+			buffer_index++;
+
+			/* データ送信 */
+			huart_ptr->gState &= 0xFFFFFFFE;	/* Clear Tx Busy */
+			HAL_UART_Transmit_DMA(huart_ptr, tx_buffer, buffer_index);
+			com_state = COM_RX_WAIT;
+		}
+		
+	}
+
+	wait_counter --;
 }
